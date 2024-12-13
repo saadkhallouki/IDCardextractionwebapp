@@ -1,0 +1,57 @@
+<div class="container">
+    <mat-card class="card">
+        <mat-card-header>
+            <mat-card-title>Extraction de la Carte d'Identité</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="image-upload">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden #fileInput />
+                <button mat-raised-button color="primary" (click)="fileInput.click()">
+                    Choisir une photo / Prendre une photo
+                </button>
+                <button mat-raised-button color="accent" (click)="openCamera()">
+                    Ouvrir la caméra
+                </button>
+                <button mat-raised-button color="warn" (click)="captureImage()">
+                    Capturer l'image
+                </button>
+            </div>
+
+            <!-- Ajouter un élément vidéo pour afficher le flux en direct -->
+            <div class="video-preview" *ngIf="video">
+                <video #videoElement [srcObject]="video.srcObject" autoplay></video>
+            </div>
+
+            <div class="image-preview" *ngIf="selectedImage">
+                <img [src]="selectedImage" alt="Image sélectionnée" class="image">
+            </div>
+
+            <div *ngIf="extractedData" class="data-output">
+                <mat-form-field class="form-field">
+                    <mat-label>Prénom</mat-label>
+                    <input matInput [value]="extractedData.first_name" readonly />
+                </mat-form-field>
+                <mat-form-field class="form-field">
+                    <mat-label>Nom</mat-label>
+                    <input matInput [value]="extractedData.last_name" readonly />
+                </mat-form-field>
+                <mat-form-field class="form-field">
+                    <mat-label>Date de Naissance</mat-label>
+                    <input matInput [value]="extractedData.date_of_birth" readonly />
+                </mat-form-field>
+                <mat-form-field class="form-field">
+                    <mat-label>Lieu de Naissance</mat-label>
+                    <input matInput [value]="extractedData.place_of_birth" readonly />
+                </mat-form-field>
+                <mat-form-field class="form-field">
+                    <mat-label>Code ID</mat-label>
+                    <input matInput [value]="extractedData.id_code" readonly />
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="errorMessage" class="error-message">
+                <mat-icon color="warn">error</mat-icon> {{ errorMessage }}
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
