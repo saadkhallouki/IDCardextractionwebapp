@@ -1,3 +1,11 @@
+Demo :
+
+https://github.com/user-attachments/assets/cd70612d-6763-4c01-bdcc-f7165a65ce0d
+
+
+
+
+
 # IdCardExtractionApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.11.
