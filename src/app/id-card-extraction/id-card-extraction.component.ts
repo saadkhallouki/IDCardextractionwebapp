@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import Tesseract from 'tesseract.js';
 
 interface IDCardData {
   first_name: string;
@@ -47,7 +46,7 @@ export class IdCardExtractionComponent {
       .then(stream => {
         if (this.video) {
           this.video.srcObject = stream;
-          this.video.play();  // Lancer le flux vidéo
+          this.video.play();  // Start the video stream
         }
       })
       .catch(err => {
@@ -65,34 +64,22 @@ export class IdCardExtractionComponent {
       context?.drawImage(this.video, 0, 0);
       const imageData = canvas.toDataURL('image/png');
       this.selectedImage = imageData;
-      this.extractTextFromImage(imageData);
+
+      // Convert the base64 image to a Blob for uploading
+      const blob = this.dataURLtoBlob(imageData);
+      this.uploadImage(blob);
     }
   }
 
-  extractTextFromImage(image: string) {
-    Tesseract.recognize(
-      image,
-      'eng',
-      {
-        logger: info => console.log(info)
-      }
-    ).then(({ data: { text } }) => {
-      console.log(text);
-      this.extractedData = this.parseExtractedData(text);
-    }).catch(err => {
-      this.errorMessage = 'Erreur lors de l\'extraction des données : ' + err.message;
-    });
-  }
-
-  parseExtractedData(text: string): IDCardData {
-    const lines = text.split('\n');
-    return {
-      first_name: lines[0] || '',
-      last_name: lines[1] || '',
-      date_of_birth: lines[2] || '',
-      place_of_birth: lines[3] || '',
-      id_code: lines[4] || ''
-    };
+  dataURLtoBlob(dataURL: string): Blob {
+    const byteString = atob(dataURL.split(',')[1]);
+    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
   }
 
   onFileSelected(event: any) {
@@ -108,9 +95,9 @@ export class IdCardExtractionComponent {
     }
   }
 
-  uploadImage(file: File) {
+  uploadImage(file: Blob | File) {
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    formData.append('file', file, file instanceof File ? file.name : 'captured_image.png');
 
     this.http.post<IDCardData>('http://127.0.0.1:5000/upload', formData)
       .subscribe({

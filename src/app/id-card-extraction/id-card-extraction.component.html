@@ -7,7 +7,7 @@
             <div class="image-upload">
                 <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden #fileInput />
                 <button mat-raised-button color="primary" (click)="fileInput.click()">
-                    Choisir une photo / Prendre une photo
+                    Choisir une photo
                 </button>
                 <button mat-raised-button color="accent" (click)="openCamera()">
                     Ouvrir la caméra
@@ -17,7 +17,7 @@
                 </button>
             </div>
 
-            <!-- Ajouter un élément vidéo pour afficher le flux en direct -->
+            <!-- Video Preview for live stream -->
             <div class="video-preview" *ngIf="video">
                 <video #videoElement [srcObject]="video.srcObject" autoplay></video>
             </div>
